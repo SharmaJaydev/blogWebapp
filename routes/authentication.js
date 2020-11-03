@@ -3,6 +3,7 @@ const express=require('express')
 const router=express.Router()
 const mongoose=require('mongoose')
 const User=mongoose.model("User")
+const crypto=require('crypto')
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const {JWT}=require('../config/security')
@@ -11,12 +12,17 @@ const nodemailer=require('nodemailer')
 
 const sendgridTransport=require('nodemailer-sendgrid-transport')
 
+const {SENDGRID_API,EMAIL} =require('../config/security')
 
 
 const transporter=nodemailer.createTransport(sendgridTransport(
     {
         auth:{
+<<<<<<< HEAD
 //             api_key:"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"
+=======
+            api_key:SENDGRID_API
+>>>>>>> 9bf601c... added reset password
         }
     }
 ))
@@ -71,6 +77,7 @@ router.post('/signup',(req,res)=>
 })
 
 router.post('/signin',(req,res)=>
+
 {
     const {email,password}=req.body
     if(!email||!password)
@@ -106,4 +113,70 @@ router.post('/signin',(req,res)=>
                 })
             })
 })
+<<<<<<< HEAD
 module.exports=router  
+=======
+
+router.post('/reset-password',(req,res)=>
+{
+    crypto.randomBytes(32,(err,buffer)=>
+    {
+        if(err)
+        {
+            console.log(err)
+        }
+        const token=buffer.toString("hex")
+        User.findOne({email:req.body.email})
+        .then(user=>
+            {
+                if(!user)
+                {
+                return res.status(422).json({error:"User dont exists with that email"})
+            }
+            user.resetToken=token
+            user.expireToken=Date.now() + 3600000
+            user.save().then((result)=>
+            {
+                transporter.sendMail({
+                    to:user.email,
+                    from:"jaydevjaipur00@gmail.com",
+                    subject:"password reset",
+                    html:`
+                    <p>You requested for password reset</p>
+                    <h5>click in this <a href="${EMAIL}/reset/${token}">link</a> to reset password </h5>`
+                })
+                res.json({message:"check your email"})
+            })
+
+        })
+    })
+})
+
+router.post('/new-password',(req,res)=>
+{
+    const newPassword=req.body.password
+    const sentToken=req.body.token
+    User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
+    .then(user=>
+        {
+            if(!user)
+            {
+                return res.status(422).json({error:"Try again session expired"})
+            }
+            bcrypt.hash(newPassword,8).then(hashedpassword=>
+                {
+                    user.password=hashedpassword
+                    user.resetToken=undefined
+                    user.expireToken=undefined
+                    user.save().then((saveduser)=>
+                    {
+                        res.json({message:"password sucessfully updated"})
+                    })
+                })
+        }).catch(err=>
+            {
+                console.log(err)
+            })
+})
+module.exports=router  
+>>>>>>> 9bf601c... added reset password
