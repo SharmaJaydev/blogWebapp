@@ -33,6 +33,7 @@ app.use(require('./routes/authentication'))
 app.use(require('./routes/post'))
 app.use(require('./routes/user'))
 
+//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
 if(process.env.NODE_ENV=="production")
 {
     app.use(express.static('client/build'))

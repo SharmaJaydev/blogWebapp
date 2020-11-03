@@ -7,7 +7,19 @@ const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const {JWT}=require('../config/security')
 const reqlogin=require('../middleware/reqlogin')
+const nodemailer=require('nodemailer')
 
+const sendgridTransport=require('nodemailer-sendgrid-transport')
+
+
+
+const transporter=nodemailer.createTransport(sendgridTransport(
+    {
+        auth:{
+            api_key:"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"
+        }
+    }
+))
 // router.get('/proctected',reqlogin,(req,res)=>
 // {
 //      res.send("hello user" )
@@ -38,6 +50,12 @@ router.post('/signup',(req,res)=>
                 user.save()
                 .then(user=>
                   {
+                      transporter.sendMail({
+                          to:user.email,
+                          from:"jaydevjaipur00@gmail.com",
+                          subject:"signup sucessfully",
+                          html:"<h1>Welcome to Blog app</h1>"
+                      })
                       res.json({message:"saved sucessfully"})
                   })
                   .catch(err=>
