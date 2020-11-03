@@ -18,11 +18,7 @@ const {SENDGRID_API,EMAIL} =require('../config/security')
 const transporter=nodemailer.createTransport(sendgridTransport(
     {
         auth:{
-<<<<<<< HEAD
-//             api_key:"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"
-=======
             api_key:SENDGRID_API
->>>>>>> 9bf601c... added reset password
         }
     }
 ))
@@ -113,9 +109,6 @@ router.post('/signin',(req,res)=>
                 })
             })
 })
-<<<<<<< HEAD
-module.exports=router  
-=======
 
 router.post('/reset-password',(req,res)=>
 {
@@ -179,4 +172,3 @@ router.post('/new-password',(req,res)=>
             })
 })
 module.exports=router  
->>>>>>> 9bf601c... added reset password
