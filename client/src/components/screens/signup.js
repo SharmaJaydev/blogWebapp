@@ -83,7 +83,7 @@ const Signup=()=>
     return(
         <div className="mycard">
             <div className="card auth-card input-field">
-                <h2>Pritilipi</h2>
+                <h2>Blog app</h2>
                 <input
                  type="text"
                  placeholder="name"
